@@ -2,6 +2,7 @@ package lib;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -118,5 +119,31 @@ public class Employee {
 	    } else {
 	        monthWorkingInYear = 12;
 	    }
+	}
+	
+	// Getters tambahan
+	public String getEmployeeId() {
+	    return employeeId;
+	}
+
+	public String getFullName() {
+	    return firstName + " " + lastName;
+	}
+
+	public boolean isForeigner() {
+	    return isForeigner;
+	}
+
+	public int getMonthlySalary() {
+	    return monthlySalary;
+	}
+
+	public int getOtherMonthlyIncome() {
+	    return otherMonthlyIncome;
+	}
+
+	public int getMonthWorkingInYear() {
+	    calculateMonthsWorkedInYear();
+	    return monthWorkingInYear;
 	}
 }
