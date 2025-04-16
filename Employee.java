@@ -13,9 +13,8 @@ public class Employee {
 	private String idNumber;
 	private String address;
 	
-	private int yearJoined;
-	private int monthJoined;
-	private int dayJoined;
+	// Kode refactoring - Deklarasi variabel
+	private LocalDate joinDate;
 	private int monthWorkingInYear;
 	
 	private boolean isForeigner;
@@ -31,20 +30,20 @@ public class Employee {
 	private List<String> childNames;
 	private List<String> childIdNumbers;
 	
-	public Employee(String employeeId, String firstName, String lastName, String idNumber, String address, int yearJoined, int monthJoined, int dayJoined, boolean isForeigner, boolean gender) {
-		this.employeeId = employeeId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.idNumber = idNumber;
-		this.address = address;
-		this.yearJoined = yearJoined;
-		this.monthJoined = monthJoined;
-		this.dayJoined = dayJoined;
-		this.isForeigner = isForeigner;
-		this.gender = gender;
-		
-		childNames = new LinkedList<String>();
-		childIdNumbers = new LinkedList<String>();
+	// Kode refactoring - Constructor
+	public Employee(String employeeId, String firstName, String lastName, String idNumber, String address, 
+	               int yearJoined, int monthJoined, int dayJoined, boolean isForeigner, boolean gender) {
+	    this.employeeId = employeeId;
+	    this.firstName = firstName;
+	    this.lastName = lastName;
+	    this.idNumber = idNumber;
+	    this.address = address;
+	    this.joinDate = LocalDate.of(yearJoined, monthJoined, dayJoined);
+	    this.isForeigner = isForeigner;
+	    this.gender = gender;
+	    
+	    childNames = new ArrayList<>();
+	    childIdNumbers = new ArrayList<>();
 	}
 	
 	/**
@@ -92,17 +91,32 @@ public class Employee {
 		childIdNumbers.add(childIdNumber);
 	}
 	
+	// Kode refactoring - getAnnualIncomeTax dan calculateMonthsWorkedInYear
 	public int getAnnualIncomeTax() {
-		
-		//Menghitung berapa lama pegawai bekerja dalam setahun ini, jika pegawai sudah bekerja dari tahun sebelumnya maka otomatis dianggap 12 bulan.
-		LocalDate date = LocalDate.now();
-		
-		if (date.getYear() == yearJoined) {
-			monthWorkingInYear = date.getMonthValue() - monthJoined;
-		}else {
-			monthWorkingInYear = 12;
-		}
-		
-		return TaxFunction.calculateTax(monthlySalary, otherMonthlyIncome, monthWorkingInYear, annualDeductible, spouseIdNumber.equals(""), childIdNumbers.size());
+	    calculateMonthsWorkedInYear();
+	    
+	    boolean hasSpouse = spouseIdNumber != null && !spouseIdNumber.isEmpty();
+	    int numberOfChildren = childIdNumbers.size();
+	    
+	    return TaxFunction.calculateTax(monthlySalary, otherMonthlyIncome, monthWorkingInYear, 
+	                                    annualDeductible, hasSpouse, numberOfChildren);
+	}
+
+	/**
+	 * Menghitung berapa lama pegawai bekerja dalam setahun ini.
+	 * Jika pegawai sudah bekerja dari tahun sebelumnya maka otomatis dianggap 12 bulan.
+	 */
+	private void calculateMonthsWorkedInYear() {
+	    LocalDate currentDate = LocalDate.now();
+	    
+	    if (currentDate.getYear() == joinDate.getYear()) {
+	        monthWorkingInYear = currentDate.getMonthValue() - joinDate.getMonthValue();
+	        // Handle edge case where employee joined this month
+	        if (monthWorkingInYear < 0) {
+	            monthWorkingInYear = 0;
+	        }
+	    } else {
+	        monthWorkingInYear = 12;
+	    }
 	}
 }
