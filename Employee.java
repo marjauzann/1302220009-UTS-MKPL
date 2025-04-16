@@ -83,8 +83,8 @@ public class Employee {
 	}
 	
 	public void setSpouse(String spouseName, String spouseIdNumber) {
-		this.spouseName = spouseName;
-		this.spouseIdNumber = idNumber;
+	    this.spouseName = spouseName;
+	    this.spouseIdNumber = spouseIdNumber; // Bug fixed: was using idNumber instead of spouseIdNumber
 	}
 	
 	public void addChild(String childName, String childIdNumber) {
